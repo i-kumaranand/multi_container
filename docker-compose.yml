@@ -1,0 +1,50 @@
+version: '3'
+services:
+  nginx:
+    restart: always
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./nginx
+    ports:
+      - '3050:80'
+
+  postgres:
+    image: 'postgres:latest'
+  
+  redis:
+    image: 'redis:latest'
+  
+  server_api:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./server_api
+    volumes:
+      - /app/node_modules
+      - /docker_kubernetes_projects/react_project/multi_container/server_api:/app
+    environment:
+    - REDIS_HOST=redis
+    - REDIS_PORT=6379
+    - PGUSER=postgres
+    - PGHOST=postgres
+    - PGDATABASE=postgres
+    - PGPASSWORD=postgres_password
+    - PGPORT=5432
+  
+  client:
+    build:
+        dockerfile: Dockerfile.dev
+        context: ./fib_app_frontend
+    volumes:
+      - /app/node_modules
+      - /docker_kubernetes_projects/react_project/multi_container/fib_app_frontend:/app
+  
+  worker:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./worker
+    volumes:
+      - /app/node_modules
+      - /docker_kubernetes_projects/react_project/multi_container/worker:/app
+    environment:
+    - REDIS_HOST=redis
+    - REDIS_PORT=6379
