@@ -1,0 +1,24 @@
+sudo: required
+services:
+  - docker
+
+#testing done only for the react-app. if we have tests for the worker/express
+#also more lines can be added in before_install & script sections for each of them.
+before_install:
+  - docker build -t container_id -f ./fib_app_frontend/Dockerfile.dev ./fib_app_frontend
+script:
+  - docker run container_id npm run test -- --coverage
+
+#after building the above 'production' images push them to docker hub below.
+after_success:
+  - docker build -t fib_app_frontend build ./fib_app_frontend
+  - docker build -t nginx ./nginx
+  - docker build -t server_api ./server_api
+  - docker build -t worker ./worker
+  #login into the docker CLI
+  - echo "$DOCKER_PWD" | docker login -u "$DOCKER_ID" --password-stdin
+  #after successful login above push the images to the docker hub
+  - docker push fib_app_frontend
+  - docker push nginx
+  - docker push server_api
+  - docker push worker
