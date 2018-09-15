@@ -11,14 +11,14 @@ script:
 
 #after building the above 'production' images push them to docker hub below.
 after_success:
-  - docker build -t fib_app_frontend build ./fib_app_frontend
-  - docker build -t nginx ./nginx
-  - docker build -t server_api ./server_api
-  - docker build -t worker ./worker
+  - docker build -t kanand/fib_app_frontend ./fib_app_frontend
+  - docker build -t kanand/nginx ./nginx
+  - docker build -t kanand/server_api ./server_api
+  - docker build -t kanand/worker ./worker
   #login into the docker CLI
   - echo "$DOCKER_PWD" | docker login -u "$DOCKER_ID" --password-stdin
   #after successful login above push the images to the docker hub
-  - docker push fib_app_frontend
-  - docker push nginx
-  - docker push server_api
-  - docker push worker
+  - docker push kanand/fib_app_frontend
+  - docker push kanand/nginx
+  - docker push kanand/server_api
+  - docker push kanand/worker
