@@ -10,6 +10,10 @@ script:
   - docker run container_id npm run test -- --coverage
 
 #after building the above 'production' images push them to docker hub below.
+  #one has to mention kanand/ while tagging the image so that when
+  #image push to docker hub is successfull. It sort of tells the path
+  #where to store the image on docker hub
+  #(e.g. [docker.io/[secure]/server_api] <--- this is travis output)
 after_success:
   - docker build -t kanand/fib_app_frontend ./fib_app_frontend
   - docker build -t kanand/nginx ./nginx
@@ -22,3 +26,17 @@ after_success:
   - docker push kanand/nginx
   - docker push kanand/server_api
   - docker push kanand/worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: ap-south-1
+  app: multi_container_docker
+  env: MultiContainerDocker-env
+  bucket_name: elasticbeanstalk-ap-south-1-630684117158
+  bucket_path: multi_container_docker
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: $AWS_SECRET_KEY
+  
