@@ -12,7 +12,7 @@
         {
             "name": "server_api",
             "image": "kanand/server_api",
-            "hostname": "server_api",
+            "hostname": "server-api",
             "essential":false,
             "memory": 128
         },
